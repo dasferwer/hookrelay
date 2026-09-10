@@ -18,7 +18,7 @@ from .service import publish_event
 
 @asynccontextmanager
 async def lifespan(app):
-    cipher()  # Fail at startup if the encryption key is malformed.
+    cipher()  # Проверяем ключ при запуске, чтобы ошибка не всплыла при первой доставке.
     yield
     await engine.dispose()
 
@@ -79,7 +79,7 @@ async def endpoint(data: EndpointInput, user: User = Depends(current_user)):
         raise HTTPException(422, str(error)) from None
     secret = secrets.token_urlsafe(32)
     async with engine.begin() as conn:
-        # Bound each account's fanout. Serialize registration for this account.
+        # Блокируем аккаунт, чтобы два запроса не обошли лимит получателей.
         await conn.execute(text("SELECT id FROM users WHERE id=:id FOR UPDATE"), {"id": user.id})
         count = await conn.scalar(
             text("SELECT count(*) FROM endpoints WHERE user_id=:user"), {"user": user.id}

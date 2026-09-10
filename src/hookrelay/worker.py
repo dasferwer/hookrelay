@@ -55,7 +55,7 @@ async def send(session, delivery):
             allow_redirects=False,
             timeout=aiohttp.ClientTimeout(total=settings.request_timeout_seconds),
         ) as response:
-            # Never buffer an unbounded receiver response or persist its potentially sensitive content.
+            # Ответ приёмника может быть большим или содержать личные данные; тело не сохраняем.
             await response.content.read(1024)
             return Outcome(
                 status_code=response.status,

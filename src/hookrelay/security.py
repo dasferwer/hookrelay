@@ -50,7 +50,7 @@ def validate_url(url: str) -> str:
 
 
 class PublicResolver(AbstractResolver):
-    """Validate every DNS answer and return pinned IPs directly to TCPConnector."""
+    """Проверяем все адреса из DNS и передаём их коннектору без повторного резолвинга."""
 
     async def resolve(self, host, port=0, family=socket.AF_INET):
         records = await asyncio.get_running_loop().getaddrinfo(

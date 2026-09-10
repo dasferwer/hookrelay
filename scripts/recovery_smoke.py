@@ -1,4 +1,4 @@
-"""Run on the host from this project directory. Restarts only this project's workers."""
+"""Запускаем из папки проекта на хосте. Проверка перезапускает его воркеры."""
 
 import json
 import subprocess

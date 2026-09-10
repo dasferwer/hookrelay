@@ -111,7 +111,7 @@ async def publish_event(user_id, event_type, payload, key):
 
 
 async def reserve_due(limit=50):
-    """Durable outbox claim. A lost publish is retried after its database lease expires."""
+    """Резервируем доставки. Если публикация сорвётся, после lease их можно забрать снова."""
     claimed = []
     async with engine.begin() as conn:
         rows = (

@@ -1,4 +1,4 @@
-"""Real API -> PostgreSQL -> RabbitMQ -> worker -> signed HTTP receiver smoke."""
+"""Проверяем доставку от API через очередь до приёмника, который проверяет подпись."""
 
 import json
 import os

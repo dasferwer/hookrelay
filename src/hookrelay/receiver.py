@@ -1,4 +1,4 @@
-"""Local test receiver with fault injection and an idempotent database effect."""
+"""Демо-приёмник: умеет отвечать с ошибкой, но учитывает каждое событие один раз."""
 
 import asyncio
 import hashlib

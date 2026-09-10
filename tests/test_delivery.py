@@ -120,7 +120,7 @@ async def test_duplicate_message_does_not_start_two_attempts(client, identities)
 
 async def test_lost_publish_recovers_and_stale_message_is_ignored(client, identities):
     await prepare(client, identities)
-    first = (await reserve_due())[0]  # simulate commit followed by publisher process failure
+    first = (await reserve_due())[0]  # Имитируем падение отправителя сразу после commit.
     assert await reserve_due() == []
     await due_now()
     second = (await reserve_due())[0]
