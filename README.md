@@ -104,3 +104,23 @@ HookRelay combines a PostgreSQL delivery outbox with RabbitMQ wakeups,
 lease fencing, signed requests and bounded retries. Its failure-injection
 receiver demonstrates recovery from ambiguous timeouts and worker crashes
 without duplicating the receiver's transactional business effect.
+
+## Дополнительные сетевые проверки
+
+`tests/test_network_boundaries.py` расширяет контракт приёмника и SSRF:
+
+- Контролируемые mixed A/AAAA DNS-ответы с loopback/link-local/mapped/reserved/multicast
+  IPv6 отклоняются целиком; публичный dual-stack возвращается как численные адреса.
+  При следующем резолвинге смена на metadata/link-local адрес отклоняется.
+- Настоящий локальный HTTP 302 не вызывает переход по Location.
+- Timeout клиента после commit настоящего receiver в PostgreSQL допускает повтор:
+  два принятых одинаковых тела дают одно бизнес-действие; другое подписанное тело
+  с тем же ID получает 409. HTTP слой — локальный aiohttp stub над ASGI receiver.
+- Отключение endpoint после начала отправки не отзывает уже принятый внешний запрос:
+  его успешный результат фиксируется, новые события не создают доставок на отключённый
+  endpoint. Подпись проверяется на фактически отправленных байтах.
+
+Локально 09.10.2026: 24 теста прошли на отдельном PostgreSQL17 Docker; полные
+Ruff/format-проверки успешны. Локальный HTTP разрешён только в тестовой конфигурации.
+Это не проверка внешнего TLS-провайдера или боевого DNS; production allowlist,
+HTTPS и запрет redirects не менялись. Exactly-once отправки не обещается.
